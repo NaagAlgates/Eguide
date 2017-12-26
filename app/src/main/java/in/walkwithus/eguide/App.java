@@ -8,7 +8,9 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.TimedText;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -208,8 +210,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
     public void playFile(PlayFileEvent playFileEvent) throws IOException {
         String fileName = playFileEvent.sFileName;
         final MediaPlayer mediaPlayer = playFileEvent.mediaPlayer;
-        AssetFileDescriptor descriptor = App.get().getAssets().openFd(fileName);
-        mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+        //AssetFileDescriptor descriptor = App.get().getAssets().openFd(fileName);
+        //mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+        mediaPlayer.setDataSource("http://www.samisite.com/sound/cropShadesofGrayMonkees.mp3");
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
             @Override
@@ -220,12 +223,53 @@ public class App extends Application implements Application.ActivityLifecycleCal
                 Logger.d(TAG,"Stopped");
             }
         });
-        mediaPlayer.prepare();
+        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+
+                mp.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                    @Override
+                    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                        //EventBus.getDefault().post(new ShowToastEvent("Media Player Prepared",true));
+                        mediaPlayer.start();
+                        EventBus.getDefault().post(new ChangeActionEvent(false,false));
+                        Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                        // Vibrate for 500 milliseconds
+                        v.vibrate(500);
+                    }
+                });
+            }
+        });
+        mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                //EventBus.getDefault().post(new ShowToastEvent("Buffer, please wait.",true));
+            }
+        });
+        mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int what, int extra) {
+                EventBus.getDefault().post(new ShowToastEvent("MediaPlayer Error",true));
+                return false;
+            }
+        });
+        mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                EventBus.getDefault().post(new ShowToastEvent("MediaPlayer Info Listener",true));
+                return false;
+            }
+        });
+        mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(MediaPlayer mp) {
+                EventBus.getDefault().post(new ShowToastEvent("MediaPlayer seek completed",true));
+            }
+        });
+        mediaPlayer.prepareAsync();
         //mediaPlayer.setVolume(1f, 1f);
         mediaPlayer.setLooping(false);
-        mediaPlayer.start();
         Preferences.saveString(AppConstants.PREF_LAST_PLAYED_FILE,playFileEvent.sRawName);
-        EventBus.getDefault().post(new ChangeActionEvent(false,false));
     }
     /*@Subscribe
     public void emptyStopFile(StopPlayingEvent stopPlayingEvent) throws IOException{
