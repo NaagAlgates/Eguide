@@ -2,15 +2,18 @@ package in.walkwithus.eguide;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.TimedText;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -32,11 +35,14 @@ import in.walkwithus.eguide.broadcast.ConnectivityReceiver;
 import in.walkwithus.eguide.events.ChangeActionEvent;
 import in.walkwithus.eguide.events.ContentIdentified;
 import in.walkwithus.eguide.events.ContentInterrupted;
+import in.walkwithus.eguide.events.NoInternetEvent;
 import in.walkwithus.eguide.events.PausePlayingEvent;
 import in.walkwithus.eguide.events.PlayFileEvent;
+import in.walkwithus.eguide.events.ShowNoInternetScreenEvent;
 import in.walkwithus.eguide.events.ShowToastEvent;
 import in.walkwithus.eguide.events.StopPlayingEvent;
 import in.walkwithus.eguide.helpers.AppConstants;
+import in.walkwithus.eguide.helpers.AppHelper;
 import in.walkwithus.eguide.helpers.Logger;
 import in.walkwithus.eguide.helpers.Preferences;
 import in.walkwithus.eguide.service.GPSService;
@@ -145,6 +151,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         activities.remove(activity);
         activityStates.remove(activity);
         Logger.d(TAG, "An activity was destroyed: " + activity + ". Activities: " + activities);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -197,7 +204,13 @@ public class App extends Application implements Application.ActivityLifecycleCal
         Logger.d(TAG,sFileName);
         mediaPlayer = stopPlaying(mediaPlayer);
         mediaPlayer = reAssignPlayer(mediaPlayer);
-        EventBus.getDefault().post(new PlayFileEvent(contentIdentified.contentDataFile,sFileName,mediaPlayer));
+        if(AppHelper.checkConnection()) {
+            EventBus.getDefault().post(new NoInternetEvent(false));
+            EventBus.getDefault().post(new PlayFileEvent(contentIdentified.contentDataFile, sFileName, mediaPlayer));
+        }else{
+            //Show No internet Screen
+            EventBus.getDefault().post(new NoInternetEvent(true));
+        }
         //playContent(sFileName,mediaPlayer);
     }
     @Subscribe
@@ -205,6 +218,14 @@ public class App extends Application implements Application.ActivityLifecycleCal
         Logger.d(TAG,"ContentInterrupted");
         if(mediaPlayer!=null)
             mediaPlayer = stopPlaying(mediaPlayer);
+    }
+    @Subscribe
+    public void isInternetConnected(NoInternetEvent noInternetEvent){
+        Logger.d(TAG,"isInternetConnected");
+        if(noInternetEvent.isInternetDown){
+            //Show internet Down screen
+            EventBus.getDefault().post(new ShowNoInternetScreenEvent());
+        }
     }
     @Subscribe
     public void playFile(PlayFileEvent playFileEvent) throws IOException {
@@ -235,7 +256,9 @@ public class App extends Application implements Application.ActivityLifecycleCal
                         EventBus.getDefault().post(new ChangeActionEvent(false,false));
                         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
                         // Vibrate for 500 milliseconds
-                        v.vibrate(500);
+                        if (v != null) {
+                            v.vibrate(500);
+                        }
                     }
                 });
             }
@@ -325,11 +348,11 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         FirebaseAnalytics firebaseAnalytics;
         firebaseAnalytics = FirebaseAnalytics.getInstance(App.get());
-        *//*Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
         bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, 1);
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Main Activity");
         //Logs an app event.
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);*//*
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         //Sets whether analytics collection is enabled for this app on this device.
         firebaseAnalytics.setAnalyticsCollectionEnabled(true);
@@ -374,5 +397,24 @@ public class App extends Application implements Application.ActivityLifecycleCal
 
         return App.get().getResources().getIdentifier(imageFileName,
                 "drawable", App.get().getPackageName());
+    }
+    public boolean isGPSEnabled(){
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+    public void showGPSDisabledAlertToUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("GPS is disabled in your device. Please enable it.")
+                .setCancelable(false)
+                .setPositiveButton("Settings",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(callGPSSettingIntent);
+                            }
+                        });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 }

@@ -1,6 +1,7 @@
 package in.walkwithus.eguide.activity;
 
 import android.Manifest;
+import android.animation.Animator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -17,17 +19,23 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
 
+import in.walkwithus.eguide.App;
 import in.walkwithus.eguide.R;
 import in.walkwithus.eguide.adapter.ContentImageDisplayAdapter;
 import in.walkwithus.eguide.events.ChangeActionEvent;
 import in.walkwithus.eguide.events.ContentIdentified;
 import in.walkwithus.eguide.events.PausePlayingEvent;
+import in.walkwithus.eguide.events.ShowNoInternetScreenEvent;
 import in.walkwithus.eguide.events.StopPlayingEvent;
 import in.walkwithus.eguide.helpers.AppConstants;
 import in.walkwithus.eguide.helpers.Logger;
@@ -43,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     Preferences preferences;
     GifImageView infoDisplayingGif,speakerDisplayImage;
-    TextView actionText;
+    TextView actionText,searchingText;
     ViewPager ContentImageViewPager;
     LinearLayout ContentActionItems;
     ContentImageDisplayAdapter contentImageDisplayAdapter;
-    RelativeLayout searchingLayout;
+    RelativeLayout searchingLayout,noInternetLayout;
     ScrollView dataLayout;
     boolean isExitClicked=false;
     CircleIndicator indicator;
@@ -78,13 +86,64 @@ public class MainActivity extends AppCompatActivity {
         }
         preferences = new Preferences();
         actionText = (TextView) findViewById(R.id.actionText);
+        searchingText = (TextView) findViewById(R.id.searchingText);
+        searchingText.setText(getString(R.string.searching_text));
         infoDisplayingGif = (GifImageView) findViewById(R.id.infoDisplayingGif);
+        infoDisplayingGif.setImageResource(R.drawable.loading);
         speakerDisplayImage = (GifImageView) findViewById(R.id.speakerDisplayImage);
         ContentImageViewPager = (ViewPager)findViewById(R.id.ContentImageViewPager);
         searchingLayout = (RelativeLayout) findViewById(R.id.searchingLayout);
+        noInternetLayout = (RelativeLayout) findViewById(R.id.noInternetLayout);
         dataLayout = (ScrollView) findViewById(R.id.dataLayout);
         ContentActionItems = (LinearLayout) findViewById(R.id.ContentActionItems);
         indicator = (CircleIndicator) findViewById(R.id.indicator);
+        YoYo.with(Techniques.FadeOut)
+                .duration(AppConstants.animationDefaultDuration)
+                .interpolate(new AccelerateDecelerateInterpolator())
+                .withListener(new Animator.AnimatorListener() {
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {}
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        YoYo.with(Techniques.FadeIn)
+                                .duration(AppConstants.animationDefaultDuration)
+                                .interpolate(new AccelerateDecelerateInterpolator())
+                                .withListener(this).playOn(searchingText);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {}
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {}
+                }).playOn(searchingText);
+        YoYo.with(Techniques.FadeOut)
+                .duration(AppConstants.animationDefaultDuration)
+                .interpolate(new AccelerateDecelerateInterpolator())
+                .withListener(new Animator.AnimatorListener() {
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {}
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        YoYo.with(Techniques.FadeIn)
+                                .duration(AppConstants.animationDefaultDuration)
+                                .interpolate(new AccelerateDecelerateInterpolator())
+                                .withListener(this).playOn(actionText);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {}
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {}
+                }).playOn(actionText);
+        if(!App.get().isGPSEnabled()){
+            App.get().showGPSDisabledAlertToUser();
+        }
     }
     @Override
     public void onRequestPermissionsResult(
@@ -124,15 +183,16 @@ public class MainActivity extends AppCompatActivity {
                 showSearching();
             }else{
                 isExitClicked=false;
-                actionText.setText("Completed");
+                actionText.setText(getString(R.string.completed_text));
+                noInternetLayout.setVisibility(View.GONE);
                 ContentActionItems.setVisibility(View.VISIBLE);
                 speakerDisplayImage.setImageResource(R.drawable.speaking_still);
             }
         }else{
-            Logger.d(TAG,"Speaking");
-            actionText.setText("Speaking");
+            actionText.setText(getString(R.string.playing_text));
             //infoDisplayingGif.setImageResource(R.drawable.speaking);
             searchingLayout.setVisibility(View.GONE);
+            noInternetLayout.setVisibility(View.GONE);
             dataLayout.setVisibility(View.VISIBLE);
             contentImageDisplayAdapter = new ContentImageDisplayAdapter(images);
             ContentImageViewPager.setAdapter(contentImageDisplayAdapter);
@@ -141,13 +201,22 @@ public class MainActivity extends AppCompatActivity {
             speakerDisplayImage.setImageResource(R.drawable.speaking);
         }
     }
+    @Subscribe
+    public void showNoInternet(ShowNoInternetScreenEvent showNoInternetScreenEvent){
+        searchingLayout.setVisibility(View.GONE);
+        dataLayout.setVisibility(View.GONE);
+        ContentActionItems.setVisibility(View.GONE);
+        noInternetLayout.setVisibility(View.VISIBLE);
+    }
     private void showSearching(){
-        Logger.d(TAG,"Searching");
-        actionText.setText("Searching");
+        actionText.setText(getString(R.string.searching_text));
+        searchingText.setText(getString(R.string.searching_text));
         infoDisplayingGif.setImageResource(R.drawable.loading);
         searchingLayout.setVisibility(View.VISIBLE);
         dataLayout.setVisibility(View.GONE);
         ContentActionItems.setVisibility(View.GONE);
+        noInternetLayout.setVisibility(View.GONE);
+
     }
     public void replayClicked(View view) {
         Preferences preferences = new Preferences();

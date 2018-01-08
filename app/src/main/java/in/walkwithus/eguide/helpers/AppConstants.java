@@ -32,6 +32,7 @@ public interface AppConstants {
     String PUSH_NOTIFICATION = "pushNotification";
     int setMinimumSessionDuration=10000;
     int setSessionTimeoutDuration=1800000;
+    int animationDefaultDuration=2000;
 
     // id to handle the notification in the notification tray
     int NOTIFICATION_ID = 100;

@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">Eguide</string>
+    <string name="searching_text">Searching…</string>
+    <string name="playing_text">Playing</string>
+    <string name="completed_text">Completed</string>
     <string-array name="guide_data">
-        <item>10.783328,79.133414</item> <!--this is keralanthagan data guide_data[0]-->
+        <item>10.78327805,79.13335312</item> <!--this is keralanthagan data guide_data[0]-->
+        <item>10.78344952,79.13340275</item> <!--this is vedi gundu guide_data[1]-->
         <item>10.783088,79.132754</item> <!--this is duvarabalagar data guide_data[1]-->
+        <item>10.78333576,79.13349006</item> <!--this is WWU Entrance Data guide_data[1]-->
     </string-array>
 </resources>

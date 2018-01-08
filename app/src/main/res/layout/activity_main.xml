@@ -18,17 +18,17 @@
             android:id="@+id/infoDisplayingGif"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/loading" />
+            android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/searchingText"
             android:layout_below="@+id/infoDisplayingGif"
             android:textStyle="italic"
             android:textSize="30sp"
             android:gravity="center"
             android:textColor="@android:color/holo_green_light"
             android:padding="10dp"
-            android:text="Searching..."
+            android:text=""
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -112,5 +112,12 @@
         </LinearLayout>
 
     </ScrollView>
+    <RelativeLayout
+        android:id="@+id/noInternetLayout"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
