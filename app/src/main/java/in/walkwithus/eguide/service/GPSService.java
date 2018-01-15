@@ -179,7 +179,8 @@ public class GPSService extends Service implements GoogleApiClient.ConnectionCal
                 if(distance<= AppConstants.MINIMUM_CHECK_DISTANCE_METER) {
                     String sFileName=guideLat[0]+guideLat[1];
                     Logger.d(TAG,sFileName);
-                    EventBus.getDefault().post(new ContentIdentified("http://www.samisite.com/sound/cropShadesofGrayMonkees.mp3"));
+                    EventBus.getDefault().post(new ContentIdentified(sFileName));
+                    //EventBus.getDefault().post(new ContentIdentified("http://www.samisite.com/sound/cropShadesofGrayMonkees.mp3"));
                     return;
                 }else{
                     EventBus.getDefault().post(new ContentInterrupted());

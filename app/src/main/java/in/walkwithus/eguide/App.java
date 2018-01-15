@@ -119,7 +119,15 @@ public class App extends Application implements Application.ActivityLifecycleCal
         activityStates.put(activity, ActivityState.Started);
         if (appWasInBackground) {
             //onAppEnteredForeground(activity);
-            Logger.e(TAG,"appWasInBackground");
+            Logger.e(TAG, "appWasInBackground");
+            if (!AppHelper.isMyServiceRunning(GPSService.class)) {
+                Logger.d(TAG, "Start Service");
+                startService(new Intent(this, GPSService.class));
+            }
+            if (!EventBus.getDefault().isRegistered(this)) {
+                mediaPlayer = reAssignPlayer(mediaPlayer);
+                EventBus.getDefault().register(this);
+            }
         }
     }
 
@@ -143,6 +151,12 @@ public class App extends Application implements Application.ActivityLifecycleCal
             //onAppEnteredBackground(activity);
             Logger.e(TAG,"appIsInBackground");
             //stopPlaying();
+            if(AppHelper.isMyServiceRunning(GPSService.class)){
+                Logger.d(TAG,"Stop Service");
+                stopService(new Intent(this,   GPSService.class));
+            }
+            EventBus.getDefault().unregister(this);
+            mediaPlayer = stopPlaying(mediaPlayer);
         }
     }
 
@@ -229,11 +243,12 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
     @Subscribe
     public void playFile(PlayFileEvent playFileEvent) throws IOException {
-        String fileName = playFileEvent.sFileName;
+        String fileName = playFileEvent.sRawName;
         final MediaPlayer mediaPlayer = playFileEvent.mediaPlayer;
-        //AssetFileDescriptor descriptor = App.get().getAssets().openFd(fileName);
-        //mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
-        mediaPlayer.setDataSource("http://www.samisite.com/sound/cropShadesofGrayMonkees.mp3");
+        //fileName = fileName.replace(".","-");
+        AssetFileDescriptor descriptor = App.get().getAssets().openFd(fileName+".mp3");
+        mediaPlayer.setDataSource(descriptor.getFileDescriptor(), descriptor.getStartOffset(), descriptor.getLength());
+        //mediaPlayer.setDataSource("http://www.samisite.com/sound/cropShadesofGrayMonkees.mp3");
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
             @Override
@@ -244,7 +259,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
                 Logger.d(TAG,"Stopped");
             }
         });
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        /*mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
 
@@ -288,11 +303,20 @@ public class App extends Application implements Application.ActivityLifecycleCal
             public void onSeekComplete(MediaPlayer mp) {
                 EventBus.getDefault().post(new ShowToastEvent("MediaPlayer seek completed",true));
             }
-        });
-        mediaPlayer.prepareAsync();
+        });*/Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        if (v != null) {
+            v.vibrate(500);
+        }
+        mediaPlayer.prepare();
+        //mediaPlayer.prepareAsync();
         //mediaPlayer.setVolume(1f, 1f);
         mediaPlayer.setLooping(false);
         Preferences.saveString(AppConstants.PREF_LAST_PLAYED_FILE,playFileEvent.sRawName);
+        mediaPlayer.start();
+        EventBus.getDefault().post(new ChangeActionEvent(false,false));
+
+
     }
     /*@Subscribe
     public void emptyStopFile(StopPlayingEvent stopPlayingEvent) throws IOException{

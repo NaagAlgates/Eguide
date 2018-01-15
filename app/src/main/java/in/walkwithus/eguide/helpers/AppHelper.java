@@ -1,7 +1,10 @@
 package in.walkwithus.eguide.helpers;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.location.Location;
 
+import in.walkwithus.eguide.App;
 import in.walkwithus.eguide.broadcast.ConnectivityReceiver;
 
 /**
@@ -30,5 +33,19 @@ public class AppHelper {
                 break;
         }
         return distance;
+    }
+
+    public static void setTAG(String TAG) {
+        AppHelper.TAG = TAG;
+    }
+
+    public static boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) App.get().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

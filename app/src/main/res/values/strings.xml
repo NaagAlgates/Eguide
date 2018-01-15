@@ -8,5 +8,12 @@
         <item>10.78344952,79.13340275</item> <!--this is vedi gundu guide_data[1]-->
         <item>10.783088,79.132754</item> <!--this is duvarabalagar data guide_data[1]-->
         <item>10.78333576,79.13349006</item> <!--this is WWU Entrance Data guide_data[1]-->
+        <item>12.617608,80.192778</item> <!--this is Krishna cave temple-->
+        <item>12.6167,80.1917</item> <!--this is Mahishasuramardini Mandapa-->
+        <item>12.618105,80.192307</item> <!--this is Varaha cave temple-->
+        <item>12.619422,80.192601</item> <!--this is Tirumoorthy cave temple-->
+        <item>12.657095,80.2093</item> <!--this is Tiger cave temple-->
+        <item>12.659197,80.210409</item> <!--this is Oldest murugan temple-->
+        <item>12.616566,80.198863</item> <!--this is Shore temple-->
     </string-array>
 </resources>

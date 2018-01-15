@@ -2,12 +2,14 @@ package in.walkwithus.eguide.activity;
 
 import android.Manifest;
 import android.animation.Animator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -48,6 +50,7 @@ import static android.app.Service.START_NOT_STICKY;
 import static in.walkwithus.eguide.helpers.AppConstants.PERMISSION_RQ;
 
 public class MainActivity extends AppCompatActivity {
+    private long backPressedTime = 0;
     private static final String TAG = MainActivity.class.getSimpleName();
     Preferences preferences;
     GifImageView infoDisplayingGif,speakerDisplayImage;
@@ -59,10 +62,10 @@ public class MainActivity extends AppCompatActivity {
     ScrollView dataLayout;
     boolean isExitClicked=false;
     CircleIndicator indicator;
-    String images[] = {"https://lh4.ggpht.com/mJDgTDUOtIyHcrb69WM0cpaxFwCNW6f0VQ2ExA7dMKpMDrZ0A6ta64OCX3H-NMdRd20=w300",
+    String images[];/*= {"https://lh4.ggpht.com/mJDgTDUOtIyHcrb69WM0cpaxFwCNW6f0VQ2ExA7dMKpMDrZ0A6ta64OCX3H-NMdRd20=w300",
             "http://s2.thingpic.com/images/2J/YRuJQtWbQFLjHWx7w5MQE9sS.png",
             "https://lh3.googleusercontent.com/X-e8ol99z-1kGJ_EmqqfN-nqDvNMKiTEUlIWtGk-L4NxkVX3-8qThkVJKaUgF5iJFA=w300",
-            "http://endofprospecting.com/wp-content/uploads/2014/08/url-small.jpg"};
+            "http://endofprospecting.com/wp-content/uploads/2014/08/url-small.jpg"};*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,14 +161,26 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG)
                     .show();
         }else{
+            Logger.d(TAG,"Start Service");
             startService(new Intent(this, GPSService.class));
+        }
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Logger.d(TAG,"onResume");
+        showSearching();
+        try {
+            EventBus.getDefault().register(this);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
     @Override
     protected void onStart(){
         super.onStart();
         try {
-            EventBus.getDefault().register(this);
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -194,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
             searchingLayout.setVisibility(View.GONE);
             noInternetLayout.setVisibility(View.GONE);
             dataLayout.setVisibility(View.VISIBLE);
+            String imageName=preferences.getString(AppConstants.PREF_LAST_PLAYED_FILE);
+            images= new String[]{imageName + "_1.jpeg", imageName + "_2.jpeg", imageName + "_3.jpeg", imageName + "_4.jpeg"};
             contentImageDisplayAdapter = new ContentImageDisplayAdapter(images);
             ContentImageViewPager.setAdapter(contentImageDisplayAdapter);
             indicator.setViewPager(ContentImageViewPager);
@@ -230,5 +247,17 @@ public class MainActivity extends AppCompatActivity {
     public void exitClicked(View view) {
         isExitClicked = true;
         showSearching();
+    }
+    @Override
+    public void onBackPressed() {
+        long t = System.currentTimeMillis();
+        if (t - backPressedTime > 2000) {    // 2 secs
+            backPressedTime = t;
+            Toast.makeText(this, "Press back again to logout",
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            super.onBackPressed();
+            EventBus.getDefault().unregister(this);
+        }
     }
 }
