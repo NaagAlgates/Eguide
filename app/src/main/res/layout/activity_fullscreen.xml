@@ -22,7 +22,7 @@
         android:padding="10dp"
         android:id="@+id/clueImagesText"
         android:layout_marginTop="80dp"
-        android:layout_gravity="top|right"
+        android:layout_gravity="bottom|right"
         android:gravity="center"
         android:background="@drawable/rounded_corner"
         android:textSize="14sp"
@@ -132,6 +132,7 @@
 
 
     <ImageView
+        android:visibility="gone"
         android:contentDescription="@string/app_name"
         android:background="@drawable/circular_textview"
         android:layout_gravity="center|bottom"
@@ -139,6 +140,19 @@
         android:src="@drawable/ic_play_circle_outline_black_48dp"
         android:gravity="center"
         android:id="@+id/playImageContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/timerTextView"
+        android:layout_marginTop="140dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/rounded_corner"
+        android:text="00:00:00"
+        android:textSize="35sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:padding="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

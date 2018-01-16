@@ -99,6 +99,7 @@ public class FullScreenActivity extends AppCompatActivity {
                         public void onAnimationEnd(Animator animation) {
 
                             clueImagesText.setText("");
+                            clueImagesText.setVisibility(View.VISIBLE);
                         }
 
                         @Override
