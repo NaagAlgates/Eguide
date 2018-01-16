@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="10dp"
+    android:background="@color/colorPrimary"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent">
+
+
+        <TextView
+            android:gravity="center"
+            android:textStyle="italic"
+            android:padding="10dp"
+            android:layout_above="@+id/txt_pin_entry"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:text="Please enter the OTP that you've receievd in your email."
+            android:id="@+id/basicInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.alimuzaffar.lib.pin.PinEntryEditText
+            android:padding="10dp"
+            android:layout_centerInParent="true"
+            android:textSize="30sp"
+            android:textColor="@android:color/white"
+            android:id="@+id/txt_pin_entry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:digits="1234567890"
+            android:inputType="number"
+            android:maxLength="4"
+            android:cursorVisible="false"
+            android:textIsSelectable="false"
+            app:pinAnimationType="popIn"
+            app:pinLineStroke="2dp"
+            app:pinLineStrokeSelected="4dp"
+            app:pinBackgroundIsSquare="true"
+            app:pinLineColors="@android:color/white"/>
+
+        <!--<Button
+            android:onClick="optSubmit"
+            android:layout_below="@+id/txt_pin_entry"
+            android:id="@+id/otpSubmit"
+            android:layout_margin="50dp"
+            android:padding="10dp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:background="#00838F"
+            android:text="SUBMIT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />-->
+
+        <!--<ImageView
+            android:onClick="bookSlot"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:onClick="sendEmail"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="@string/app_name"
+            android:padding="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />-->
+
+</RelativeLayout>

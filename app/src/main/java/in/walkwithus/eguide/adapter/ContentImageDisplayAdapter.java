@@ -45,7 +45,8 @@ public class ContentImageDisplayAdapter extends PagerAdapter {
         ImageView imageView = (ImageView) itemView.findViewById(R.id.contentImage);
 
         Picasso.with(App.get())
-                .load("file:///android_asset/"+images[position])
+                 //.load("file:///android_asset/"+images[position])
+                 .load(images[position])
                 .fit()
                 .centerCrop()
                 .placeholder(R.mipmap.ic_launcher)

@@ -40,7 +40,8 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.FullScreenActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -48,6 +49,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.OTPActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.EnableSettings"
+            android:screenOrientation="portrait"/>
         <service android:enabled="true" android:name=".service.GPSService" />
         <receiver
             android:name=".broadcast.ConnectivityReceiver"
@@ -55,6 +60,12 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
                     tools:ignore="BatteryLife" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".broadcast.GpsSwitchStateReceiver">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
         <meta-data

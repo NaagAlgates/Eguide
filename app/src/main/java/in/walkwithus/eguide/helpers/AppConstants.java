@@ -15,6 +15,8 @@ public interface AppConstants {
     String TAG = AppConstants.class.getSimpleName();
 
     String FILE_EXTENSION = ".mp3";
+    String PREF_KEY_OTP = "otp_entry";
+    String PREF_OTP_ENTERED_TIME = "otp_entry_time";
     String PREF_KEY_VERSION_CODE = "version_code";
     String PREF_KEY_STOP_NAME="stop_button_name";
     String PREF_KEY_PAUSE_NAME="pause_button_name";
@@ -33,6 +35,8 @@ public interface AppConstants {
     int setMinimumSessionDuration=10000;
     int setSessionTimeoutDuration=1800000;
     int animationDefaultDuration=2000;
+    int animationSlowDuration=3000;
+    int animationQuickDuration=1000;
 
     // id to handle the notification in the notification tray
     int NOTIFICATION_ID = 100;

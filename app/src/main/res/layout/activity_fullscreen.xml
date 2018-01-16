@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="in.walkwithus.eguide.activity.FullScreenActivity">
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ContentImageViewPager"/>
+    <me.relex.circleindicator.CircleIndicator
+        android:layout_marginTop="30dp"
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        app:ci_drawable="@drawable/circleindicator_round"
+        android:layout_gravity="top"/>
+    <TextView
+        android:onClick="expandClue"
+        android:padding="10dp"
+        android:id="@+id/clueImagesText"
+        android:layout_marginTop="80dp"
+        android:layout_gravity="top|right"
+        android:gravity="center"
+        android:background="@drawable/rounded_corner"
+        android:textSize="14sp"
+        android:textStyle="normal"
+        android:textColor="@android:color/white"
+        android:drawablePadding="5dp"
+        android:drawableLeft="@android:drawable/ic_dialog_info"
+        android:drawableStart="@android:drawable/ic_dialog_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:background="@drawable/rounded_corner"
+        android:layout_gravity="right"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        android:id="@+id/huntDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:padding="10dp"
+            android:textStyle="italic"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:text="0"
+            android:id="@+id/identifiedDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:textStyle="normal"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:text="/"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:padding="10dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:text="10"
+            android:id="@+id/totalDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:onClick="previousClicked"
+            android:id="@+id/imagePrevious"
+            android:src="@drawable/ic_navigate_before_white_48dp"
+            android:contentDescription="@string/app_name"
+            android:background="@drawable/image_overlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:onClick="nextClicked"
+            android:id="@+id/imageNext"
+            android:src="@drawable/ic_navigate_next_white_48dp"
+            android:contentDescription="@string/app_name"
+            android:background="@drawable/image_overlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/meterText"
+            android:background="@drawable/circular_textview"
+            android:padding="10dp"
+            android:textSize="90sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="40"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
+        <TextView
+            android:text="Meters away"
+            android:textStyle="normal"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_below="@+id/meterText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:contentDescription="@string/app_name"
+        android:background="@drawable/circular_textview"
+        android:layout_gravity="center|bottom"
+        android:padding="20dp"
+        android:src="@drawable/ic_play_circle_outline_black_48dp"
+        android:gravity="center"
+        android:id="@+id/playImageContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>

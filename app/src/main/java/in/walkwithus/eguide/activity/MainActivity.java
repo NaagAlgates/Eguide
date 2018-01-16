@@ -5,6 +5,7 @@ import android.animation.Animator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onAnimationRepeat(Animator animation) {}
                 }).playOn(actionText);
         if(!App.get().isGPSEnabled()){
-            App.get().showGPSDisabledAlertToUser();
+            showGPSDisabledAlertToUser();
         }
     }
     @Override
@@ -259,5 +260,25 @@ public class MainActivity extends AppCompatActivity {
             super.onBackPressed();
             EventBus.getDefault().unregister(this);
         }
+    }
+
+
+    public void showGPSDisabledAlertToUser(){
+        /*android.app.AlertDialog.Builder alertDialogBuilder = new android.app.AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("GPS is disabled in your device. Please enable it.")
+                .setCancelable(false)
+                .setPositiveButton("Settings",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(callGPSSettingIntent);
+                            }
+                        });
+        android.app.AlertDialog alert = alertDialogBuilder.create();
+        alert.show();*/
+        Intent callGPSSettingIntent = new Intent(MainActivity.this,EnableSettings.class);
+        startActivity(callGPSSettingIntent);
+        finish();
     }
 }

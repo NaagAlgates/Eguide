@@ -1,6 +1,7 @@
 package in.walkwithus.eguide;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.media.MediaPlayer;
 import android.media.TimedText;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import in.walkwithus.eguide.broadcast.ConnectivityReceiver;
+import in.walkwithus.eguide.broadcast.GpsSwitchStateReceiver;
 import in.walkwithus.eguide.events.ChangeActionEvent;
 import in.walkwithus.eguide.events.ContentIdentified;
 import in.walkwithus.eguide.events.ContentInterrupted;
@@ -424,21 +425,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
     }
     public boolean isGPSEnabled(){
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-                return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
-    public void showGPSDisabledAlertToUser(){
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("GPS is disabled in your device. Please enable it.")
-                .setCancelable(false)
-                .setPositiveButton("Settings",
-                        new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int id){
-                                Intent callGPSSettingIntent = new Intent(
-                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(callGPSSettingIntent);
-                            }
-                        });
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
+
 }
