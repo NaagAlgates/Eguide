@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
             contentImageDisplayAdapter = new ContentImageDisplayAdapter(images);
             ContentImageViewPager.setAdapter(contentImageDisplayAdapter);
             indicator.setViewPager(ContentImageViewPager);
-            ContentActionItems.setVisibility(View.GONE);
+            ContentActionItems.setVisibility(View.VISIBLE);
             speakerDisplayImage.setImageResource(R.drawable.speaking);
         }
     }

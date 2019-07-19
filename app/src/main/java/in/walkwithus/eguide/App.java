@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import junit.framework.Assert;
+//import junit.framework.Assert;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -418,7 +418,7 @@ public class App extends Application implements Application.ActivityLifecycleCal
         return mediaPlayer;
     }
     public static int getImageDrawable(String imageFileName){
-        Assert.assertNotNull(imageFileName);
+        //Assert.assertNotNull(imageFileName);
 
         return App.get().getResources().getIdentifier(imageFileName,
                 "drawable", App.get().getPackageName());

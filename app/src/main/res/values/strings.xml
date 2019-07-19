@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Eguide</string>
+    <string name="app_name">eGuide</string>
     <string name="searching_text">Searching…</string>
     <string name="playing_text">Playing</string>
     <string name="completed_text">Completed</string>
@@ -15,5 +15,6 @@
         <item>12.657095,80.2093</item> <!--this is Tiger cave temple-->
         <item>12.659197,80.210409</item> <!--this is Oldest murugan temple-->
         <item>12.616566,80.198863</item> <!--this is Shore temple-->
+        <item>-33.85316,151.05065</item> <!--this is Shore temple-->
     </string-array>
 </resources>

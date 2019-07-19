@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import in.walkwithus.eguide.R;
 import in.walkwithus.eguide.broadcast.ProximityIntentReceiver;
 import in.walkwithus.eguide.events.ChangeActionEvent;
@@ -53,6 +56,7 @@ public class GPSService extends Service implements GoogleApiClient.ConnectionCal
     private static final long POINT_RADIUS = 1000; // in Meters
     private static final long PROX_ALERT_EXPIRATION = -1;
     private static final String PROXY_ALERT_INTENT ="service_location";
+    private List<LatLng> completedLocations = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -133,10 +137,27 @@ public class GPSService extends Service implements GoogleApiClient.ConnectionCal
         /*EventBus.getDefault().post(new ShowToastEvent
                 ("MY location is : " + location.getLatitude() + "," + location.getLongitude(), true));*/
         Location currentLocation=new Location("Current");
+        Location existingLocation=new Location("Existing");
         LatLng mLocation = (new LatLng(location.getLatitude(), location.getLongitude()));
         currentLocation.setLatitude(mLocation.latitude);
         currentLocation.setLongitude(mLocation.longitude);
-        identifyContent(currentLocation);
+        if(completedLocations.size()==0)
+            identifyContent(mLocation,currentLocation);
+        else {
+            existingLocation.setLatitude(completedLocations.get(completedLocations.size()-1).latitude);
+            existingLocation.setLongitude(completedLocations.get(completedLocations.size()-1).longitude);
+            //existingLocation.setLongitude(Double.parseDouble(sLongitude));
+            double distance = AppHelper.calculateDistanceMeters(currentLocation, existingLocation, AppConstants.METRIC_METER);
+            Logger.i(TAG + " distance:", "" + distance);
+            if(distance > 15)
+                identifyContent(mLocation,currentLocation);
+            else{
+                existingLocation.setLatitude(mLocation.latitude);
+                existingLocation.setLongitude(mLocation.longitude);/*
+                currentLocation.setLatitude(mLocation.latitude);
+                currentLocation.setLongitude(mLocation.longitude);*/
+            }
+        }
         /*Location existingLocation=new Location("Existing");
         Location currentLocation=new Location("Current");
         LatLng mLocation = (new LatLng(location.getLatitude(), location.getLongitude()));
@@ -160,8 +181,9 @@ public class GPSService extends Service implements GoogleApiClient.ConnectionCal
 
     }
 
-    private void identifyContent(Location currentLocation){
+    private void identifyContent(LatLng mLocation,Location currentLocation){
         Logger.d(TAG,"identifyContent");
+        completedLocations.add(mLocation);
         String[] guideDataArray = getResources().getStringArray(R.array.guide_data);
         for (String aGuideDataArray : guideDataArray) {
             String guideLat[]=aGuideDataArray.split(",");
